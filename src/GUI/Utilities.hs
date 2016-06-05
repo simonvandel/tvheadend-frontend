@@ -3,8 +3,7 @@ module GUI.Utilities
     matElClass',
     matElClass,
     matDivClass,
-    mdlNavigationItem,
-    videoEl
+    mdlNavigationItem
     ) where
 
 import           Reflex.Dom
@@ -13,17 +12,6 @@ import           GHCJS.DOM.Element (toElement)
 import           GHCJS.Types
 import           Control.Monad.IO.Class
 import           Data.Monoid
-
-videoEl :: MonadWidget t m
-  => String -- ^ Video source
-  -> m () -- ^ Video element
-videoEl src = do
-  elAttr "video" attrs blank
-  where
-    attrs =
-      "src" =: src <>
-      "controls" =: "" <>
-      "autoplay" =: ""
 
 -- http://www.getmdl.io/started/index.html#dynamic
 -- As we are adding elements to the DOM after the page has loaded,
