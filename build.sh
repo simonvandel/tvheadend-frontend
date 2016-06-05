@@ -14,4 +14,4 @@ operations="
 # the 'd' argument to entr should make the project
 # rebuild if new files are added to the already tracked directories
 # the 'c' argument to entr clear the screen on each rebuild
-find . -path ./dist -prune -o -regextype posix-extended -regex '.*\.(hs|cabal)$' -print | entr -cd sh -c "$operations"
+find . -path ./dist -prune -o -regextype posix-extended -regex '.*\.(hs|cabal|html)$' -print | entr -cd sh -c "$operations"
