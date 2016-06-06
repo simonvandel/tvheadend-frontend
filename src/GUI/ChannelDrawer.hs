@@ -8,10 +8,11 @@ import           Models.Channel
 import           Reflex.Dom
 import           Data.Text
 import           GUI.Utilities
+import           Utilities
 import           Data.Time.Clock
 import           Control.Monad.IO.Class
 
-channelDrawer :: MonadWidget t m
+channelDrawer :: forall t m. MonadWidget t m
   => String -- ^ Base url to tvheadend server
   -> m (Dynamic t (Maybe Channel)) -- ^ Channel drawer that emits the value of the currently selected channel. The channel is wrapped in a Maybe type to cover the case that no channel is selected
 channelDrawer tvhBaseUrl =
@@ -19,13 +20,13 @@ channelDrawer tvhBaseUrl =
     matElClass "span" "mdl-layout-title" $ text "Channels"
     matDivClass "mdl-layout-spacer" blank
     matElClass "nav" "mdl-navigation" $ do
-      curTime <- liftIO $ getCurrentTime
-      -- Create stream of events that fire each second,
-      -- Signifying when to synchronize with the tvheadend server
-      tick :: Event t TickInfo <- tickLossy 10 curTime
+      -- Create stream of events that fire now and then periodically,
+      -- signifying when to synchronize with the tvheadend server
+      tickEvent <- nowAndPeriodically 10
+
       -- Replace the tick info with the actual XHR request
-      let tickEvent :: Event t XhrRequest = tag (constant (tvhChannelsReq tvhBaseUrl)) tick
-      channelsJsonEvent :: Event t Text <- fmap (fmapMaybe getChannels) $ performRequestAsync $ tickEvent
+      let tvhChannelEvent :: Event t XhrRequest = tag (constant (tvhChannelsReq tvhBaseUrl)) tickEvent
+      channelsJsonEvent :: Event t Text <- fmap (fmapMaybe getChannels) $ performRequestAsync $ tvhChannelEvent
 
       -- Parse the channels from JSON.
       -- Note that unparseable JSON is silently discared.
