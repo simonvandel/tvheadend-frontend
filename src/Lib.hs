@@ -19,6 +19,7 @@ foreign import javascript unsafe
   "$1.withCredentials = true;"
   setRequestWithCredentials :: JSVal -> IO ()
 
+tvhBaseUrl :: String
 tvhBaseUrl = "http://localhost:9981/"
 
 mainUI :: MonadWidget t m => m ()
