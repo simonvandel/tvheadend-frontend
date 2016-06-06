@@ -9,12 +9,10 @@ import           Reflex.Dom
 import           Data.Text
 import           GUI.Utilities
 import           Utilities
-import           Data.Time.Clock
-import           Control.Monad.IO.Class
 
 channelDrawer :: forall t m. MonadWidget t m
   => String -- ^ Base url to tvheadend server
-  -> m (Dynamic t (Maybe Channel)) -- ^ Channel drawer that emits the value of the currently selected channel. The channel is wrapped in a Maybe type to cover the case that no channel is selected
+  -> m (Event t Channel) -- ^ Channel drawer that exposes an event that fires everytime a channel is selected
 channelDrawer tvhBaseUrl =
   matDivClass "mdl-layout__drawer" $ do
     matElClass "span" "mdl-layout-title" $ text "Channels"
@@ -43,14 +41,13 @@ channelDrawer tvhBaseUrl =
           -- extract the name of the channel, and display it
           (dynText =<< mapDyn _cname channel))
 
-      selectedChannel :: Event t (Maybe Channel) <-
+      selectedChannel :: Event t Channel <-
         -- Remove the outer layer of Dynamic, leaving only Event
         return . switchPromptlyDyn =<<
-        -- Merge all click events as one event, and wrap the Channel in Just,
-        -- as it is sure that a channel is selected on-click.
-        forDyn channelClickEventsDyn (fmap Just . leftmost)
+        -- Merge all click events as one event
+        forDyn channelClickEventsDyn leftmost
 
-      holdDyn Nothing selectedChannel
+      return selectedChannel
 
 getChannels :: XhrResponse -> Maybe Text
 getChannels xhrResponse =

@@ -10,16 +10,15 @@ import           Control.Monad
 
 player :: MonadWidget t m
   => String -- ^ Base url to tvheadend server
-  -> Dynamic t (Maybe Channel) -- ^ Channel to display.
+  -> Event t Channel -- ^ Channel to display.
   -> m () -- ^ Player widget
 player tvhBaseUrl selectedChannelDyn = do
-  playerSrcDyn <- forDyn selectedChannelDyn $ \(channelMay :: Maybe Channel) ->
-    case channelMay of
-      Nothing -> "asd"
-      Just channel -> do
-        tvhBaseUrl <> "stream/channel/" <> (_cid channel)
+  -- If no channel is selected yet, then set the src to an empty string
+  videoSrcDyn <- holdDyn "" $ ffor selectedChannelDyn streamUrl
 
-  void $ videoEl playerSrcDyn
+  void $ videoEl videoSrcDyn
+  where
+    streamUrl chan = tvhBaseUrl <> "stream/channel/" <> (_cid chan)
 
 videoEl :: MonadWidget t m
   => Dynamic t String -- ^ Video source

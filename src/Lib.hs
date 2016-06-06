@@ -6,7 +6,6 @@ module Lib
 import           Reflex.Dom
 import           Data.JSString ()
 import           GHCJS.Types
-import           Models.Channel
 import           GUI.ChannelDrawer
 import           GUI.Player
 import           GUI.Utilities
@@ -28,6 +27,7 @@ mainUI =
   -- parent that does not exist
   el "div" $ do
     matDivClass "mdl-layout mdl-js-layout mdl-layout--fixed-drawer" $ do
-      curChannel :: Dynamic t (Maybe Channel) <- channelDrawer tvhBaseUrl
+      -- create the channel drawer and react to events fired when a channel is selected
+      curChannel <- channelDrawer tvhBaseUrl
       matElClass "main" "mdl-layout__content" $ do
         player tvhBaseUrl curChannel
