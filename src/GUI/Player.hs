@@ -26,7 +26,8 @@ videoEl :: MonadWidget t m
   -> m () -- ^ Video element
 videoEl srcDyn = do
   attrs <- forDyn srcDyn $ \src ->
-    ("src" =: src <>
+    "src"      =: src <>
     "controls" =: "" <>
-    "autoplay" =: "")
+    "autoplay" =: "" <>
+    "style"    =: "width:100%;height:auto;max-height:100%"
   elDynAttr "video" attrs blank
