@@ -16,7 +16,7 @@ import Data.Vector as V
 data Channel = Channel {
   _cname :: String,
   _cid :: String
-} deriving (Show)
+} deriving (Show, Ord, Eq)
 
 parseChannelsJson :: Text -> Maybe [Channel]
 parseChannelsJson text = decode (fromStrict $ encodeUtf8 text) >>= parseMaybe parser

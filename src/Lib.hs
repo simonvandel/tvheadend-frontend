@@ -8,7 +8,7 @@ import           Data.JSString ()
 import           GHCJS.Types
 import           GUI.ChannelDrawer
 import           GUI.Player
-import           GUI.Utilities
+import           Data.Monoid
 
 someFunc :: IO ()
 someFunc = mainWidget mainUI
@@ -21,23 +21,27 @@ foreign import javascript unsafe
 tvhBaseUrl :: String
 tvhBaseUrl = "http://localhost:9981/"
 
-header :: MonadWidget t m => m ()
-header = do
-  matElClass "header" "mdl-layout__header" $ do
-    matDivClass "mdl-layout__header-row" $ do
-      matElClass "span" "mdl-layout__title" $ text "Tvheadend frontend"
-      matDivClass "mdl-layout-spacer" blank
+navBar :: MonadWidget t m => m ()
+navBar = do
+  elClass "nav" "navbar navbar-default navbar-static-top" $ do
+    divClass "container-fluid" $ do
+      divClass "navbar-header" $ do
+        divClass "navbar-brand" $ do
+          text "Tvheadend frontend"
 
 mainUI :: MonadWidget t m => m ()
-mainUI =
-  -- We need to have this outer main div, as MDL would otherwise try to access a
-  -- parent that does not exist
-  el "div" $ do
-    matDivClass "mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header" $ do
-      header
+mainUI = do
+  navBar
 
-      -- create the channel drawer and react to events fired when a channel is selected
-      curChannel <- channelDrawer tvhBaseUrl
-
-      matElClass "main" "mdl-layout__content" $ do
+  divClass "container-fluid" $ do
+    divClass "row" $ do
+      curChannel <- elAttr "div"
+        ("class" =: "col-lg-2" <>
+        -- height:90vh to fit the list inside the viewport
+        -- overflow-y:auto to get vertical scrollbar
+        -- padding-right:0px to pull scrollbar closer to the list
+         "style" =: "height:90vh;overflow-y:auto;padding-right:0px") $ do
+        -- create the channel drawer and react to events fired when a channel is selected
+        channelDrawer tvhBaseUrl
+      divClass "col-lg-10" $ do
         player tvhBaseUrl curChannel
