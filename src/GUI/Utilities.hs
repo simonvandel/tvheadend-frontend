@@ -20,7 +20,7 @@ clickableListItem assocDataDyn selectedDyn child = do
     then "active" :: String
     else "") selectedDyn
 
-  attrs <- forDyn (traceDyn "asd" activeness) (\active -> "class" =: ("list-group-item " <> active) <> "href" =: "#")
+  attrs <- forDyn activeness (\active -> "class" =: ("list-group-item " <> active) <> "href" =: "#")
 
   (element, _) <- elDynAttr' "a" attrs child
   -- TODO: Because we are sampling the dynamic, there might be some issues in the data not updating.

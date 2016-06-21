@@ -35,7 +35,7 @@ channelDrawer tvhBaseUrl =
     -- Initially the list of channels should be empty.
     channels :: Dynamic t [Channel] <- holdDyn [] parsedChannels
 
-    channelsMap :: Dynamic t (Map Channel Channel) <- forDyn (traceDyn "channels" channels) (\_channels -> fmap dupe _channels) >>=
+    channelsMap :: Dynamic t (Map Channel Channel) <- forDyn channels (\_channels -> fmap dupe _channels) >>=
                    mapDyn fromList
 
     -- Set the currently selected channel to a none existing channel,
@@ -44,7 +44,7 @@ channelDrawer tvhBaseUrl =
 
         -- Display the channels in a list, showing only the channel name
         selectedChannel :: Event t Channel <-
-          selectViewListWithKey (traceDyn "initial" curSelected) channelsMap
+          selectViewListWithKey curSelected channelsMap
             (\channel _ selectedDyn ->
               clickableListItem (constDyn channel) selectedDyn
                 -- extract the name of the channel, and display it
